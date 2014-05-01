@@ -1,0 +1,24 @@
+<databaseChangeLog
+	xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+	http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd"
+	logicalFilePath="1-sandbox.xml">
+
+	<!--
+	  - Create `user` table
+	  -->
+	<changeSet id="1-1" author="sandbox">
+
+		<createTable tableName="user">
+			<column name="id" type="int" autoIncrement="true">
+				<constraints primaryKey="true" primaryKeyName="pk_user"/>
+			</column>
+			<column name="name" type="varchar(256)"/>
+		</createTable>
+
+	</changeSet>
+	<!-- :~) -->
+
+</databaseChangeLog>

@@ -1,0 +1,107 @@
+<?xml version="1.0" ?>
+
+<configuration>
+	<property name="DEFAULT_PATTERN" value="%-4relative [%thread] %-5level %logger{35} - %msg%n" />
+
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>${DEFAULT_PATTERN}</pattern>
+		</encoder>
+	</appender>
+
+	<!-- :~) -->
+
+	<!--
+	  - Logging to text file
+	  -->
+	<appender name="LogFile" class="ch.qos.logback.core.FileAppender">
+		<file>target/log/sandbox-test.log</file>
+		<append>false</append>
+		<encoder>
+			<pattern>${DEFAULT_PATTERN}</pattern>
+		</encoder>
+	</appender>
+	<!-- :~) -->
+
+    <appender name="TOMCAT_LOG" class="ch.qos.logback.core.FileAppender">
+        <file>target/log/tomcat.log</file>
+        <append>false</append>
+        <encoder>
+			<pattern>${DEFAULT_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="SQL_LOG" class="ch.qos.logback.core.FileAppender">
+        <file>target/log/sql.log</file>
+        <append>false</append>
+        <encoder>
+			<pattern>${DEFAULT_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="MYSQL_LOG" class="ch.qos.logback.core.FileAppender">
+        <file>target/log/mysql.log</file>
+        <append>false</append>
+        <encoder>
+			<pattern>${DEFAULT_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+	<!--
+	  - ##################################################
+	  - Logging setting for 3-party libraries
+	  - ##################################################
+	  -->
+
+	<!--
+	  - For tomcat6-maven-plugin
+	  -->
+	<logger name="org.apache.catalina" level="INFO" additivity="false">
+		<appender-ref ref="CONSOLE"/>
+		<appender-ref ref="TOMCAT_LOG"/>
+	</logger>
+	<!-- :~) -->
+
+	<!--
+	  - For Others
+	  -->
+	<logger name="com.sun.jersey" level="WARN"/>
+	<logger name="com.sun.jersey.api.core" level="INFO"/>
+	<logger name="org.no_ip.mikelue.jpa" level="WARN"/>
+	<logger name="org.springframework" level="WARN"/>
+	<!-- :~) -->
+
+	<!--
+	  - For MySQL
+	  -->
+	<logger name="com.sandbox.mysql" level="DEBUG" additivity="false">
+        <appender-ref ref="MYSQL_LOG" />
+	</logger>
+	<logger name="MySQL" level="DEBUG" additivity="false">
+        <appender-ref ref="MYSQL_LOG" />
+	</logger>
+	<!-- :~) -->
+
+    <!--
+      - For Hibernate
+      -->
+	<logger name="org.hibernate" level="WARN"/>
+
+    <logger name="org.hibernate.SQL" level="TRACE" additivity="false">
+        <appender-ref ref="SQL_LOG" />
+    </logger>
+    <logger name="org.hibernate.transaction" level="TRACE" additivity="false">
+        <appender-ref ref="SQL_LOG" />
+    </logger>
+	<!-- :~) -->
+
+    <!-- ################################################## :~) -->
+
+	<logger name="com.sandbox" level="DEBUG"/>
+	<logger name="com.sandbox.test" level="INFO"/>
+
+	<root level="INFO">
+		<appender-ref ref="CONSOLE"/>
+		<appender-ref ref="LogFile"/>
+	</root>
+</configuration>

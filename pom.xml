@@ -1,0 +1,593 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.brownylin</groupId>
+	<artifactId>spring-jersey-sandbox</artifactId>
+	<packaging>war</packaging>
+	<version>1.0</version>
+
+	<name>Spring Jersey Sandbox</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<app.environment>development</app.environment>
+
+		<version.asm>3.1</version.asm>
+		<version.aspectj>1.8.0</version.aspectj>
+		<version.bonecp>0.8.0.RELEASE</version.bonecp>
+		<version.commons.lang3>3.3.2</version.commons.lang3>
+		<version.hibernate.validator>5.1.0.Final</version.hibernate.validator>
+		<version.hibernate>4.3.5.Final</version.hibernate>
+		<version.jackson>2.3.3</version.jackson>
+		<version.javax.el>2.2.4</version.javax.el>
+		<version.javax.inject>1</version.javax.inject>
+		<version.javax.servlet>2.5</version.javax.servlet>
+		<version.jersey>2.7</version.jersey>
+		<version.liquibase>3.1.1</version.liquibase>
+		<version.logback>1.1.2</version.logback>
+		<version.mikelue.jpaenhance>1.1.0</version.mikelue.jpaenhance>
+		<version.mysql>5.1.30</version.mysql>
+		<version.slf4j>1.7.7</version.slf4j>
+		<version.snakeyaml>1.12</version.snakeyaml>
+		<version.springframework>4.0.3.RELEASE</version.springframework>
+		<version.testng>6.8.8</version.testng>
+
+		<json.output.pretty>true</json.output.pretty>
+		<version.plugin.tomcat7>2.2</version.plugin.tomcat7>
+        <!-- :~) -->
+
+		<!--
+		  - Setting for logging framework
+		  -->
+		<logging.sandbox.level>DEBUG</logging.sandbox.level>
+		<logging.rollingFileName.file>target/log/sandbox.log</logging.rollingFileName.file>
+		<!-- :~) -->
+
+
+        <!--
+          - Setting for maven-compiler-plugin
+          -->
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
+        <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
+        <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
+        <!-- :~) -->
+
+
+		<!--
+		  - Settings for database
+		  -->
+		<mysql.log.profile>true</mysql.log.profile>
+
+		<database.host>localhost</database.host>
+		<database.name>sandbox</database.name>
+		<database.username>root</database.username>
+		<database.password>root</database.password>
+		<database.driver>com.mysql.jdbc.Driver</database.driver>
+		<database.parameter>autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=utf8&amp;zeroDateTimeBehavior=convertToNull&amp;logger=com.sandbox.mysql.MySqlLogger&amp;profileSQL=${mysql.log.profile}</database.parameter>
+
+		<liquibase.driver>${database.driver}</liquibase.driver>
+		<liquibase.url>jdbc:mysql://${database.host}:3306/${database.name}?${database.parameter}</liquibase.url>
+		<liquibase.username>${database.username}</liquibase.username>
+		<liquibase.password>${database.password}</liquibase.password>
+		<!-- :~) -->
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+	</properties>
+
+
+	<dependencies>
+		<!--
+		  - Ioc Engine
+		  -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>${version.springframework}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${version.springframework}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${version.springframework}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.inject</groupId>
+			<artifactId>javax.inject</artifactId>
+			<version>${version.javax.inject}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+			<version>${version.aspectj}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aspects</artifactId>
+			<version>${version.springframework}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- :~) -->
+
+		<!--
+		  - JPA and validator engine
+		  -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>${version.hibernate}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${version.hibernate.validator}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.el</groupId>
+					<artifactId>javax.el-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.no-ip.mikelue.jpa</groupId>
+			<artifactId>core</artifactId>
+			<version>${version.mikelue.jpaenhance}</version>
+		</dependency>
+		<!-- :~) -->
+
+		<!--
+		  - Dependencies for database
+		  -->
+		<dependency>
+			<groupId>com.jolbox</groupId>
+			<artifactId>bonecp</artifactId>
+			<version>${version.bonecp}</version>
+		</dependency>
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${version.mysql}</version>
+		</dependency>
+		<!-- :~) -->
+
+		<!--
+		  - Dependencies for java web
+		  -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<scope>provided</scope>
+			<version>${version.javax.servlet}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.el</groupId>
+			<artifactId>javax.el-api</artifactId>
+			<scope>provided</scope>
+			<version>${version.javax.el}</version>
+		</dependency>
+		<!-- :~) -->
+
+
+		<!--
+		  - Dependencies for Restful service
+		  -->
+		<dependency>
+			<groupId>org.glassfish.jersey.containers</groupId>
+			<artifactId>jersey-container-servlet-core</artifactId>
+			<version>${version.jersey}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-client</artifactId>
+			<version>${version.jersey}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-multipart</artifactId>
+			<version>${version.jersey}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.ext</groupId>
+			<artifactId>jersey-spring3</artifactId>
+			<version>${version.jersey}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.glassfish.hk2.external</groupId>
+					<artifactId>bean-validator</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.module</groupId>
+			<artifactId>jackson-module-jaxb-annotations</artifactId>
+			<version>${version.jackson}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.jaxrs</groupId>
+			<artifactId>jackson-jaxrs-json-provider</artifactId>
+			<version>${version.jackson}</version>
+		</dependency>
+		<!-- :~) -->
+
+
+		<!--
+		  - Dependencies for logging
+		  -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${version.slf4j}</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${version.logback}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>${version.slf4j}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>log4j-over-slf4j</artifactId>
+			<version>${version.slf4j}</version>
+		</dependency>
+		<!-- :~) -->
+
+		<!--
+		  - Dependencies from Aapche commons
+		  -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${version.commons.lang3}</version>
+		</dependency>
+		<!-- :~) -->
+
+		<!--
+		  - Dependencies for test
+		  -->
+		<dependency>
+		    <groupId>org.liquibase</groupId>
+		    <artifactId>liquibase-core</artifactId>
+			<version>${version.liquibase}</version>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>${version.testng}</version>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.yaml</groupId>
+					<artifactId>snakeyaml</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${version.springframework}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jul-to-slf4j</artifactId>
+			<version>${version.slf4j}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-ext</artifactId>
+			<version>${version.slf4j}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.no-ip.mikelue.jpa</groupId>
+			<artifactId>test</artifactId>
+			<version>${version.mikelue.jpaenhance}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- :~) -->
+
+		<!--
+		  - Misc dependencies
+		  -->
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>ST4</artifactId>
+			<version>4.0.7</version>
+		</dependency>
+		<dependency>
+			<groupId>asm</groupId>
+			<artifactId>asm</artifactId>
+			<version>${version.asm}</version>
+		</dependency>
+		<!-- :~) -->
+
+	</dependencies>
+
+	<build>
+		<finalName>sandbox</finalName>
+
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>application.properties</include>
+					<include>logback.xml</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>application.properties</exclude>
+					<exclude>logback.xml</exclude>
+					<exclude>*.swp</exclude>
+					<exclude>*.swo</exclude>
+				</excludes>
+			</resource>
+		</resources>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<packagingExcludes>**/.*.swp</packagingExcludes>
+				</configuration>
+			</plugin>
+
+			<!--
+			  - AspectJ weaver for spring managed objects
+			  -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>aspectj-maven-plugin</artifactId>
+				<version>1.4</version>
+				<configuration>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+					<verbose>false</verbose>
+					<outxml>true</outxml>
+					<Xlint>ignore</Xlint>
+					<includes>
+						<include>**/sandbox/dao/**/*.java</include>
+						<include>**/sandbox/service/**/*.java</include>
+					</includes>
+					<weaveDependencies>
+						<weaveDependency>
+							<groupId>org.no-ip.mikelue.jpa</groupId>
+							<artifactId>core</artifactId>
+						</weaveDependency>
+					</weaveDependencies>
+					<aspectLibraries>
+						<aspectLibrary>
+							<groupId>org.springframework</groupId>
+							<artifactId>spring-aspects</artifactId>
+						</aspectLibrary>
+					</aspectLibraries>
+				</configuration>
+				<executions>
+					<execution>
+						<id>compile</id>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>test-compile</id>
+						<goals>
+							<goal>test-compile</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.aspectj</groupId>
+						<artifactId>aspectjweaver</artifactId>
+						<version>${version.aspectj}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.aspectj</groupId>
+						<artifactId>aspectjtools</artifactId>
+						<version>${version.aspectj}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<!-- :~) -->
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>1.2</version>
+				<executions>
+					<execution>
+						<id>default-cli</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requireMavenVersion>
+									<version>[3.0,)</version>
+								</requireMavenVersion>
+								<requireJavaVersion>
+									<version>[1.7,)</version>
+								</requireJavaVersion>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<taskdef name="instrument" classname="org.hibernate.tool.instrument.javassist.InstrumentTask">
+									<classpath>
+										<path refid="maven.runtime.classpath" />
+										<path refid="maven.plugin.classpath" />
+									</classpath>
+								</taskdef>
+								<instrument verbose="false">
+									<fileset dir="${project.build.outputDirectory}">
+										<include name="**/orm/**/*.class" />
+									</fileset>
+								</instrument>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.hibernate</groupId>
+                        <artifactId>hibernate-core</artifactId>
+                        <version>${version.hibernate}</version>
+                    </dependency>
+					<dependency>
+						<groupId>org.javassist</groupId>
+						<artifactId>javassist</artifactId>
+						<version>3.17.1-GA</version>
+					</dependency>
+                </dependencies>
+			</plugin>
+
+			<plugin>
+				<groupId>org.liquibase</groupId>
+				<artifactId>liquibase-maven-plugin</artifactId>
+				<version>${version.liquibase}</version>
+				<configuration>
+					<systemProperties>
+						<logback.configurationFile>src/test/resources/logback-test.xml</logback.configurationFile>
+					</systemProperties>
+					<changeLogFile>src/main/liquibase/main.xml</changeLogFile>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.springframework</groupId>
+						<artifactId>spring-core</artifactId>
+						<version>${version.springframework}</version>
+					</dependency>
+					<dependency>
+						<groupId>ch.qos.logback</groupId>
+						<artifactId>logback-classic</artifactId>
+						<version>${version.logback}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-api</artifactId>
+						<version>${version.slf4j}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<compilerArguments>
+						<Xlint />
+					</compilerArguments>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>${version.plugin.tomcat7}</version>
+				<configuration>
+					<username>admin</username>
+					<password>admin</password>
+					<path>/service</path>
+					<tomcatUsers>src/test/tomcat/tomcat-users.xml</tomcatUsers>
+					<contextFile>${project.build.directory}/filtered-tomcat-context/context.xml</contextFile>
+					<systemProperties>
+						<logback.configurationFile>src/test/resources/logback-test.xml</logback.configurationFile>
+					</systemProperties>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>ch.qos.logback</groupId>
+						<artifactId>logback-classic</artifactId>
+						<version>${version.logback}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-api</artifactId>
+						<version>${version.slf4j}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.slf4j</groupId>
+						<artifactId>log4j-over-slf4j</artifactId>
+						<version>${version.slf4j}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.14</version>
+				<configuration>
+					<systemPropertyVariables>
+						<app.environment>development</app.environment>
+						<!--
+						  - Force the unit test to be run by fixed configuration of database,
+						  - whatever the profile is
+						  -->
+						<database.host>localhost</database.host>
+						<database.name>sandbox</database.name>
+						<database.username>root</database.username>
+						<database.password>root</database.password>
+						<!-- :~) -->
+					</systemPropertyVariables>
+				</configuration>
+			</plugin>
+
+		</plugins>
+
+	</build>
+
+	<repositories>
+		<repository>
+			<id>mvn-repo</id>
+			<url>https://github.com/browny/mvn-repo/raw/master/releases</url>
+		</repository>
+	</repositories>
+
+</project>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- For assistance related to logback-translator or configuration  -->
+<!-- files in general, please contact the logback user mailing list -->
+<!-- at http://www.qos.ch/mailman/listinfo/logback-user             -->
+<!--                                                                -->
+<!-- For professional support please see                            -->
+<!--    http://www.qos.ch/shop/products/professionalSupport         -->
+<!--                                                                -->
+
+<configuration>
+	<appender name="ConsoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} %c{1} [%p] %m%n</pattern>
+		</encoder>
+	</appender>
+
+	<!--
+	  - Logging to HTML file
+	  -->
+	<appender name="HtmlFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${logging.htmlFileName.file}</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<fileNamePattern>${logging.htmlFileName.file}.%i.html</fileNamePattern>
+			<minIndex>1</minIndex>
+			<maxIndex>10</maxIndex>
+		</rollingPolicy>
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<maxFileSize>100KB</maxFileSize>
+		</triggeringPolicy>
+		<encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+			<layout class="ch.qos.logback.classic.html.HTMLLayout">
+				<pattern>%relative%thread%mdc%level%logger%msg</pattern>
+			</layout>
+		</encoder>
+	</appender>
+	<!-- :~) -->
+	<!--
+	  - Logging to text file
+	  -->
+	<appender name="RollingLogFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<!--See http://logback.qos.ch/manual/appenders.html#RollingFileAppender-->
+		<!--and http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy-->
+		<!--for further documentation-->
+		<file>${logging.rollingFileName.file}</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${logging.rollingFileName.file}.%d{yyy-MM-dd}</fileNamePattern>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss} %c{1} [%p] %m%n</pattern>
+		</encoder>
+	</appender>
+	<!-- :~) -->
+
+	<!--
+	  - Logging setting for 3-party libraries
+	  -->
+	<logger name="com.dappit.Dapper.parser" level="ERROR"/>
+	<logger name="org.hibernate" level="WARN"/>
+	<logger name="org.springframework" level="WARN"/>
+	<logger name="org.w3c.tidy" level="FATAL"/>
+	<!-- :~) -->
+
+	<!--
+	  - Loggering setting for MySQL
+	  -->
+	<logger name="MySQL" level="WARN" additivity="false" />
+	<logger name="com.sandbox.mysql" level="WARN" additivity="false"/>
+	<!-- :~) -->
+
+	<logger name="com.sandbox" level="${logging.sandbox.level}" />
+
+	<root level="INFO">
+		<appender-ref ref="ConsoleAppender"/>
+		<appender-ref ref="RollingLogFile"/>
+		<appender-ref ref="HtmlFile"/>
+	</root>
+</configuration>
